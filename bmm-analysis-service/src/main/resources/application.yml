@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: bmm-analysis-service-leo
+    name: bmm-analysis-service
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource            # 当前数据源操作类型
     driver: oracle.jdbc.driver.OracleDriver
