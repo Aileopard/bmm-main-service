@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.leo.zu.dao.FbsBudgetControlDao">
+
+    <!-- 也可以使用resultType,但是推荐使用resultMap -->
+    <resultMap id="BaseResultMap" type="com.leo.zu.entities.FbsBudgetControl">
+        <id column="CONTROL_NAME" property="controlName" jdbcType="VARCHAR"/>
+        <id column="CONTROL_TYPE" property="controlType" jdbcType="VARCHAR"/>
+        <id column="CONTROL_VALUE" property="controlValue" jdbcType="VARCHAR"/>
+        <id column="CONTROL_RMK" property="controlRmk" jdbcType="VARCHAR"/>
+        <id column="IM_CUST_NO" property="imCustNo" jdbcType="VARCHAR"/>
+    </resultMap>
+    <insert id="insertBudgetControlParam">
+        insert into fbs_budget_control
+            (CONTROL_NAME, CONTROL_TYPE, CONTROL_VALUE, CONTROL_RMK, IM_CUST_NO)
+        values
+            (#{controlName}, #{controlType}, #{controlValue}, #{controlRmk}, #{imCustNo})
+
+    </insert>
+
+    <select id="getBudgetControlParam" resultMap="BaseResultMap">
+        select *
+        from fbs_budget_control
+        where im_cust_no = #{imCustNo}
+        and CONTROL_NAME = #{controlName}
+    </select>
+
+    <update id="updateBudgetControlParam">
+        update fbs_budget_control
+        set control_Value = #{controlValue}
+        where im_cust_no = #{imCustNo}
+        and CONTROL_NAME = #{controlName}
+    </update>
+</mapper>
+
+

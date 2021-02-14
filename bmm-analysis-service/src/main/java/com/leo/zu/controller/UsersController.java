@@ -25,8 +25,8 @@ public class UsersController {
     @ApiOperation(value = "登录",httpMethod = "POST")
     public CommonResult login(@RequestBody UserBean userBean){
         User user = usersService.getUsersByNameAndPassword(userBean);
-        log.info("**** 登录 ****" + user.toString());
-        if(userBean != null){
+        log.info("**** 开始登录 ****" + userBean.toString());
+        if(user != null){
             return new CommonResult(200,"登录成功",user);
         }else{
             return new CommonResult(400,"登录失败",null);

@@ -26,4 +26,9 @@ public class User {
      * 用户密码
      */
     private String password;
+
+    /**
+     * 四位客户号
+     */
+    private String imCustNo;
 }

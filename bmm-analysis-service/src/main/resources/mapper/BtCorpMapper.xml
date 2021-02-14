@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.leo.zu.dao.BtCorpDao">
+
+    <!-- 也可以使用resultType,但是推荐使用resultMap -->
+    <resultMap id="BaseResultMap" type="com.leo.zu.entities.BtCorp">
+        <id column="CORP_CODE" property="corpCode" jdbcType="VARCHAR"/>
+        <id column="CORP_NAME" property="corpName" jdbcType="VARCHAR"/>
+        <id column="DISPLAY_CODE" property="displayCode" jdbcType="VARCHAR"/>
+        <id column="IM_CUST_NO" property="imCustNo" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="getCorpBycorpCode" resultMap="BaseResultMap">
+        select *
+        from bt_corp
+        where 1=1
+        and IM_CUST_NO = #{imCustNo}
+    </select>
+</mapper>
+
+

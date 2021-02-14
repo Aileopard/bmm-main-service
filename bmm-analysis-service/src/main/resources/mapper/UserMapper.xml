@@ -8,10 +8,11 @@
         <id column="ID" property="id" jdbcType="VARCHAR"/>
         <id column="NAME" property="name" jdbcType="VARCHAR"/>
         <id column="PASSWORD" property="password" jdbcType="VARCHAR"/>
+        <id column="IM_CUST_NO" property="imCustNo" jdbcType="VARCHAR"/>
     </resultMap>
 
     <select id="getUsersByNameAndPassword" resultMap="BaseResultMap">
-        select name,password
+        select id,name,im_cust_no
         from users
         where 1=1
         and id = #{id}
