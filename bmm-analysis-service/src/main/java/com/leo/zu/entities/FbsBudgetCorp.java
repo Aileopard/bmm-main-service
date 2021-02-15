@@ -40,6 +40,11 @@ public class FbsBudgetCorp {
     String displayNode;
 
     /**
+     * 是否不可选
+     */
+    Boolean disabledNode;
+
+    /**
      * 部门列表
      */
     List<FbsBudgetDept> deptList;

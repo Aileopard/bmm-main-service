@@ -23,4 +23,11 @@ public interface FbsBudgetDeptService {
      */
     public List<FbsBudgetDept> getBudgetDeptTree(int controlValue, BtCorp btCorp, List<String> checkedNode);
 
+    /**
+     * 获取受控预算单位下的受控部门列表（树）
+     * @param controlValue 层数
+     * @param btCorp 受控预算单位
+     * @return
+     */
+    public List<FbsBudgetDept> getBudgetDeptTreeOfControl(int controlValue, BtCorp btCorp);
 }

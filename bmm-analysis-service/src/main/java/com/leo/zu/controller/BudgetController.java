@@ -67,6 +67,25 @@ public class BudgetController {
         }
     }
 
+    /**
+     * 获取集团下受控的预算单位/部门/科室列表(树)
+     * @param request
+     * @return
+     */
+    @PostMapping("/getBudgetCorpTreeOfControl")
+    @ApiOperation(value = "获取集团下单位部门信息",httpMethod = "POST")
+    public CommonResult getBudgetCorpTreeOfControl(@RequestBody BtCorpBudgetRequest request){
+
+        BtCorpBudgetResponse bcbr  = fbsBudgetCorpService.getBudgetCorpTreeOfControl(request);
+        bcbr.setImCustNo(request.getImCustNo());
+
+        log.info("**** 开始登录 ****" + bcbr.toString());
+        if(bcbr != null){
+            return new CommonResult(200,"查询成功",bcbr);
+        }else{
+            return new CommonResult(400,"查询失败",null);
+        }
+    }
 
     @PostMapping("/saveBudgetCorpInfo")
     @ApiOperation(value = "保存集团下单位部门信息",httpMethod = "POST")

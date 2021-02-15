@@ -215,4 +215,73 @@ public class FbsBudgetCorpImpl implements FbsBudgetCorpService {
         return fbsBudgetCorp;
     }
 
+
+    /**
+     * 获取集团下的受控预算单位/部门/科室树
+     * @param request
+     * @return
+     */
+    @Override
+    public BtCorpBudgetResponse getBudgetCorpTreeOfControl(BtCorpBudgetRequest request) {
+        if (request == null){
+            return null;
+        }
+
+        String imCustNo = request.getImCustNo();
+        BtCorpBudgetResponse response = new BtCorpBudgetResponse();
+
+        // 获取编制方式
+        FbsBudgetControl fbsBudgetControl = fbsBcService.getFbsBudgetControl(imCustNo,
+                FbsBudgetEnum.FBS_COMPILE_FLAG.getControlName());
+        if (fbsBudgetControl == null){
+            log.info("请先设置编制方式");
+            return response;
+        }
+
+        // 根据四位客户号获取集团下的所有单位信息
+        List<BtCorp> btCorpList = btCorpService.getCorpTreeByImCustNo(request.getImCustNo());
+        log.info("整个集团的单位部门科室树："+btCorpList.toString());
+        if (btCorpList == null && btCorpList.size()==0){
+            log.info("该集团无单位信息，请先加挂");
+            return response;
+        }
+
+        // 保存受控预算单位
+        List<FbsBudgetCorp> resultCorpList = new ArrayList<>();
+
+        // 获取数据库中集团下所有受控预算单位信息
+        List<FbsBudgetCorp> budgetCorpList = fbsBudgetCorpDao.getFbsBudgetCorpOfControl(imCustNo, Dict.ONE.getValue());
+        // 将受控预算list转换为map
+        Map<String, FbsBudgetCorp> corpMap = new HashMap<>(budgetCorpList.size());
+        for (FbsBudgetCorp entity : budgetCorpList){
+            corpMap.put(entity.getCorpCode(), entity);
+        }
+
+        // 遍历所有单位，筛选出受控的预算单位
+        for (BtCorp entity : btCorpList){
+            FbsBudgetCorp budgetCorp = corpMap.get(entity.getCorpCode());
+            if (budgetCorp != null){
+                // 设置前端展示的名称
+                String displayNode = "(" + budgetCorp.getCorpCode() + ")" + budgetCorp.getCorpName();
+                budgetCorp.setDisplayNode(displayNode);
+
+                int controlValue = Integer.parseInt(fbsBudgetControl.getControlValue());
+                // 获取该受控单位下的所有受控部门、科室信息
+                List<FbsBudgetDept> depts = fbsBudgetDeptService.getBudgetDeptTreeOfControl(controlValue, entity);
+                budgetCorp.setDeptList(depts);
+
+                budgetCorp.setDisabledNode(false);
+                if (budgetCorp.getDeptList() != null && controlValue - 1 > 0){
+                    // 当预算单位有下级预算部门，且编制方式为部门或科室时
+                    budgetCorp.setDisabledNode(true);
+                }
+
+                resultCorpList.add(budgetCorp);
+            }
+        }
+
+        response.setCorpList(resultCorpList);
+
+        return response;
+    }
 }

@@ -31,6 +31,13 @@
         where im_cust_no = #{imCustNo}
     </select>
 
+    <select id="getFbsBudgetCorpOfControl" resultMap="BaseResultMap">
+        select *
+        from fbs_budget_corp
+        where im_cust_no = #{imCustNo}
+        and budget_flag = #{budgetFlag}
+    </select>
+
     <update id="updateFbsBudgetCorpInfo">
         update fbs_budget_corp
         set budget_flag = #{budgetFlag}

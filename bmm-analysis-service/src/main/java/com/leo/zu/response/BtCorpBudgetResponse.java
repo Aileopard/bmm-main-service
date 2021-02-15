@@ -34,5 +34,11 @@ public class BtCorpBudgetResponse {
      */
     List<String> checkNode;
 
+    /**
+     * 灰显节点list
+     * 编制方式为部门时，单位不可选
+     * 编制方式为科室时，单位、部门不可选
+     */
+    List<String> disabledNode;
 
 }

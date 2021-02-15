@@ -147,4 +147,101 @@ public class FbsBudgetDeptImpl implements FbsBudgetDeptService {
         }
         return resultDeptTree;
     }
+
+
+    /**
+     * 获取受控预算单位下的受控部门列表（树）
+     * @param controlValue 层数
+     * @param btCorp 受控预算单位
+     * @return
+     */
+    @Override
+    public List<FbsBudgetDept> getBudgetDeptTreeOfControl(int controlValue, BtCorp btCorp) {
+        if (controlValue == 0){
+            return null;
+        }
+
+        // 保存受控部门list
+        List<FbsBudgetDept> resultDepts = new ArrayList<>();
+
+        // 获取单位下的部门列表
+        List<BtDept> deptList = btCorp.getBtDeptList();
+
+        // 获取单位下所有受控预算部门列表
+        List<FbsBudgetDept> fbsDepts = fbsBudgetDeptDao.getFbsBudgetDeptofCtrlBycorp(btCorp.getImCustNo(), btCorp.getCorpCode(), Dict.ONE.getValue());
+        // 将受控预算部门list转换为map
+        Map<String, FbsBudgetDept> deptMap = new HashMap<>(fbsDepts.size());
+        for (FbsBudgetDept entity : fbsDepts){
+            String key = entity.getImCustNo() + entity.getCorpCode() + entity.getParentCode() + entity.getDeptCode();
+            deptMap.put(key, entity);
+        }
+
+        // 遍历所有部门列表，筛选出受控的预算部门
+        for (BtDept entity : deptList){
+            String key = entity.getImCustNo() + entity.getCorpCode() + entity.getParentCode() + entity.getDeptCode();
+            FbsBudgetDept budgetDept = deptMap.get(key);
+            if (budgetDept != null){
+                // 用于前端显示
+                String displayNode = "(" + budgetDept.getDeptCode() + ")" + budgetDept.getDeptName();
+                budgetDept.setDisplayNode(displayNode);
+
+                // 受控，获取当前受控部门下的科室list
+                List<FbsBudgetDept> depts = getBudgetDeptTreeOfControls(controlValue - 1, entity,deptMap);
+                budgetDept.setDeptList(depts);
+
+                budgetDept.setDisabledNode(false);
+                if (controlValue -1 > 0 && budgetDept.getDeptList() != null){
+                    // 当当前编制方式还有下级时，且下级科室不为空
+                    budgetDept.setDisabledNode(true);
+                }
+
+                resultDepts.add(budgetDept);
+            }
+        }
+
+        return resultDepts;
+    }
+
+    /**
+     * 获取受控预算部门下的受控科室列表（树）
+     * @param controlValue 层数
+     * @param btDept 受控预算部门
+     * @return
+     */
+    private List<FbsBudgetDept> getBudgetDeptTreeOfControls(int controlValue, BtDept btDept,Map<String, FbsBudgetDept> deptMap) {
+        if (controlValue == 0){
+            return null;
+        }
+
+        // 保存受控部门list
+        List<FbsBudgetDept> resultDepts = new ArrayList<>();
+
+        // 获取单位下的部门列表
+        List<BtDept> deptList = btDept.getBtDeptList();
+        // 遍历所有部门列表，筛选出受控的预算部门
+        for (BtDept entity : deptList){
+            String key = entity.getImCustNo() + entity.getCorpCode() + entity.getParentCode() + entity.getDeptCode();
+            FbsBudgetDept budgetDept = deptMap.get(key);
+            if (budgetDept != null){
+                // 用于前端显示
+                String displayNode = "(" + budgetDept.getDeptCode() + ")" + budgetDept.getDeptName();
+                budgetDept.setDisplayNode(displayNode);
+
+                // 受控，获取当前受控部门下的科室list
+                List<FbsBudgetDept> depts = getBudgetDeptTreeOfControls(controlValue - 1, entity,deptMap);
+                budgetDept.setDeptList(depts);
+
+                budgetDept.setDisabledNode(false
+                );
+                if (controlValue -1 > 0 && budgetDept.getDeptList() != null){
+                    // 当当前编制方式还有下级时，且下级科室不为空
+                    budgetDept.setDisabledNode(true);
+                }
+
+                resultDepts.add(budgetDept);
+            }
+        }
+
+        return resultDepts;
+    }
 }

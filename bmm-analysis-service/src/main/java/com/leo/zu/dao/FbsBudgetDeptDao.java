@@ -47,4 +47,13 @@ public interface FbsBudgetDeptDao {
      * @return
      */
     FbsBudgetCorp getFbsBudgetDept(FbsBudgetDept fbsBudgetDept);
+
+    /**
+     * 获取单位下预算部门信息
+     * @param imCustNo
+     * @param corpCode
+     * @return
+     */
+    public List<FbsBudgetDept> getFbsBudgetDeptofCtrlBycorp(@Param("imCustNo")String imCustNo, @Param("corpCode")String corpCode, @Param("budgetFlag")String budgetFlag);
+
 }

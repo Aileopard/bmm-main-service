@@ -3,6 +3,7 @@ package com.leo.zu.dao;
 import com.leo.zu.entities.BtCorp;
 import com.leo.zu.entities.FbsBudgetCorp;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -38,4 +39,11 @@ public interface FbsBudgetCorpDao {
      */
     public FbsBudgetCorp getFbsBudgetCorp(FbsBudgetCorp fbsBudgetCorp);
 
+    /**
+     * 获取集团下受控预算单位信息
+     * @param imCustNo
+     * @param budgetFlag
+     * @return
+     */
+    public List<FbsBudgetCorp> getFbsBudgetCorpOfControl(@Param("imCustNo")String imCustNo, @Param("budgetFlag")String budgetFlag);
 }

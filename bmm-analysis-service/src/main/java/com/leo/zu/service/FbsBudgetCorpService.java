@@ -22,10 +22,16 @@ public interface FbsBudgetCorpService {
 
 
     /**
-     * 获取所有预算单位/部门/科室信息
+     * 获取所有预算单位/部门/科室信息（树）
      * @param request
      * @return
      */
     public BtCorpBudgetResponse getBudgetCorpTree(BtCorpBudgetRequest request);
 
+    /**
+     * 取所有受控的预算单位/部门/科室信息（树）
+     * @param request
+     * @return
+     */
+    public BtCorpBudgetResponse getBudgetCorpTreeOfControl(BtCorpBudgetRequest request);
 }
