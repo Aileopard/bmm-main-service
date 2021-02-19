@@ -8,14 +8,17 @@ import com.leo.zu.entities.FbsBudgetCorp;
 import com.leo.zu.entities.FbsBudgetDept;
 import com.leo.zu.enums.Dict;
 import com.leo.zu.enums.FbsBudgetEnum;
+import com.leo.zu.request.BaseRequest;
 import com.leo.zu.request.BtCorpBudgetRequest;
 import com.leo.zu.request.FbsBudgetCorpRequest;
 import com.leo.zu.response.BtCorpBudgetResponse;
+import com.leo.zu.response.FbsNeedCompBudResponse;
 import com.leo.zu.service.BtCorpService;
 import com.leo.zu.service.FbsBudgetControlService;
 import com.leo.zu.service.FbsBudgetCorpService;
 import com.leo.zu.service.FbsBudgetDeptService;
 import lombok.extern.slf4j.Slf4j;
+import org.omg.PortableInterceptor.INACTIVE;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -134,7 +137,7 @@ public class FbsBudgetCorpImpl implements FbsBudgetCorpService {
      * @return
      */
     @Override
-    public BtCorpBudgetResponse getBudgetCorpTree(BtCorpBudgetRequest request) {
+    public BtCorpBudgetResponse getBudgetCorpTree(BaseRequest request) {
         if (request == null){
             return null;
         }
@@ -222,7 +225,7 @@ public class FbsBudgetCorpImpl implements FbsBudgetCorpService {
      * @return
      */
     @Override
-    public BtCorpBudgetResponse getBudgetCorpTreeOfControl(BtCorpBudgetRequest request) {
+    public BtCorpBudgetResponse getBudgetCorpTreeOfControl(BaseRequest request) {
         if (request == null){
             return null;
         }
@@ -271,7 +274,7 @@ public class FbsBudgetCorpImpl implements FbsBudgetCorpService {
                 budgetCorp.setDeptList(depts);
 
                 budgetCorp.setDisabledNode(false);
-                if (budgetCorp.getDeptList() != null && controlValue - 1 > 0){
+                if (budgetCorp.getDeptList() != null && controlValue - 1 >= 0){
                     // 当预算单位有下级预算部门，且编制方式为部门或科室时
                     budgetCorp.setDisabledNode(true);
                 }
@@ -283,5 +286,82 @@ public class FbsBudgetCorpImpl implements FbsBudgetCorpService {
         response.setCorpList(resultCorpList);
 
         return response;
+    }
+
+    /**
+     *
+     * @param request
+     * @return
+     */
+    @Override
+    public FbsNeedCompBudResponse getNeedCompBudgetCorp(BaseRequest request) {
+
+        FbsNeedCompBudResponse resultResponse = new FbsNeedCompBudResponse();
+        // 获取受控单位、部门、科室
+        BtCorpBudgetResponse response = getBudgetCorpTreeOfControl(request);
+
+        // 获取编制方式
+        FbsBudgetControl fbsBudgetControl = fbsBcService.getFbsBudgetControl(request.getImCustNo(),
+                FbsBudgetEnum.FBS_COMPILE_FLAG.getControlName());
+        if (fbsBudgetControl == null){
+            log.info("请先设置编制方式");
+            return resultResponse;
+        }
+
+        int controlValue = Integer.parseInt(fbsBudgetControl.getControlValue());
+        resultResponse.setCompileFlag(controlValue);
+        // 编制方式为按单位
+        if (controlValue == 0){
+            // 获取需要受控预算单位
+            List<FbsBudgetCorp> corpList = response.getCorpList();
+            for (FbsBudgetCorp entity: corpList){
+                // 不需要将受控的部门信息传到前端
+                entity.setDeptList(null);
+            }
+            resultResponse.setNeedCompCorpList(corpList);
+            return resultResponse;
+        }
+
+        // 保存需要编制的预算部门、科室
+        List<FbsBudgetDept> resultDepts = new ArrayList<>();
+        // 编制方式按部门
+        if (controlValue == 1) {
+            // 获取需要受控预算单位
+            List<FbsBudgetCorp> corpList = response.getCorpList();
+            for (FbsBudgetCorp entity : corpList) {
+                // 获取需要受控的预算部门
+                List<FbsBudgetDept> deptList = entity.getDeptList();
+                for (FbsBudgetDept dept : deptList) {
+                    // 设置显示所属单位
+                    dept.setDisplayCorp(entity.getDisplayNode());
+                    dept.setDeptList(null);
+                }
+                resultDepts.addAll(deptList);
+            }
+        }
+
+        // 编制方式按科室
+        if (controlValue == 2){
+            // 获取需要受控预算单位
+            List<FbsBudgetCorp> corpList = response.getCorpList();
+            for (FbsBudgetCorp entity: corpList){
+                // 获取需要受控的预算部门
+                List<FbsBudgetDept> deptList = entity.getDeptList();
+                for (FbsBudgetDept dept: deptList){
+                    dept.setDisplayCorp(entity.getDisplayNode());
+                    // 获取需要受控的预算科室
+                    List<FbsBudgetDept> depts = dept.getDeptList();
+                    for (FbsBudgetDept dept1 : depts){
+                        dept1.setDisplayCorp(entity.getDisplayNode());
+                        dept1.setDisplayParentDept(dept.getDisplayNode());
+                        dept1.setDeptList(null);
+                    }
+                    resultDepts.addAll(depts);
+                }
+            }
+        }
+
+        resultResponse.setNeedCompDeptList(resultDepts);
+        return resultResponse;
     }
 }

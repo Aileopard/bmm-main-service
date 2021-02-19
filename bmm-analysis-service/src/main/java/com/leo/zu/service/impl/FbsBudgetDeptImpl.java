@@ -190,7 +190,7 @@ public class FbsBudgetDeptImpl implements FbsBudgetDeptService {
                 budgetDept.setDeptList(depts);
 
                 budgetDept.setDisabledNode(false);
-                if (controlValue -1 > 0 && budgetDept.getDeptList() != null){
+                if (controlValue -1 >= 0 && budgetDept.getDeptList() != null){
                     // 当当前编制方式还有下级时，且下级科室不为空
                     budgetDept.setDisabledNode(true);
                 }
@@ -233,7 +233,7 @@ public class FbsBudgetDeptImpl implements FbsBudgetDeptService {
 
                 budgetDept.setDisabledNode(false
                 );
-                if (controlValue -1 > 0 && budgetDept.getDeptList() != null){
+                if (controlValue -1 >= 0 && budgetDept.getDeptList() != null){
                     // 当当前编制方式还有下级时，且下级科室不为空
                     budgetDept.setDisabledNode(true);
                 }

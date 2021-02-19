@@ -5,10 +5,12 @@ import com.leo.zu.entities.CommonResult;
 import com.leo.zu.entities.FbsBudgetControl;
 import com.leo.zu.entities.FbsBudgetCorp;
 import com.leo.zu.enums.FbsBudgetEnum;
+import com.leo.zu.request.BaseRequest;
 import com.leo.zu.request.BtCorpBudgetRequest;
 import com.leo.zu.request.FbsBudgetControlRequest;
 import com.leo.zu.request.FbsBudgetCorpRequest;
 import com.leo.zu.response.BtCorpBudgetResponse;
+import com.leo.zu.response.FbsNeedCompBudResponse;
 import com.leo.zu.service.BtCorpService;
 import com.leo.zu.service.FbsBudgetControlService;
 import com.leo.zu.service.FbsBudgetCorpService;
@@ -53,7 +55,7 @@ public class BudgetController {
      */
     @PostMapping("/getBudgetCorpTree")
     @ApiOperation(value = "获取集团下单位部门信息",httpMethod = "POST")
-    public CommonResult getBudgetCorpTree(@RequestBody BtCorpBudgetRequest request){
+    public CommonResult getBudgetCorpTree(@RequestBody BaseRequest request){
         log.info("收到前端传来的客户号imCustNo："+request.getImCustNo());
 
         BtCorpBudgetResponse bcbr  = fbsBudgetCorpService.getBudgetCorpTree(request);
@@ -74,7 +76,7 @@ public class BudgetController {
      */
     @PostMapping("/getBudgetCorpTreeOfControl")
     @ApiOperation(value = "获取集团下单位部门信息",httpMethod = "POST")
-    public CommonResult getBudgetCorpTreeOfControl(@RequestBody BtCorpBudgetRequest request){
+    public CommonResult getBudgetCorpTreeOfControl(@RequestBody BaseRequest request){
 
         BtCorpBudgetResponse bcbr  = fbsBudgetCorpService.getBudgetCorpTreeOfControl(request);
         bcbr.setImCustNo(request.getImCustNo());
@@ -86,6 +88,27 @@ public class BudgetController {
             return new CommonResult(400,"查询失败",null);
         }
     }
+
+    /**
+     * 获取需要编制的预算单位
+     * @param request
+     * @return
+     */
+    @PostMapping("/getNeedCompBudgetCorp")
+    @ApiOperation(value = "获取需要编制的预算单位",httpMethod = "POST")
+    public CommonResult getNeedCompBudgetCorp(@RequestBody BaseRequest request){
+
+        FbsNeedCompBudResponse bcbr  = fbsBudgetCorpService.getNeedCompBudgetCorp(request);
+        bcbr.setImCustNo(request.getImCustNo());
+
+        log.info("**** 开始登录 ****" + bcbr.toString());
+        if(bcbr != null){
+            return new CommonResult(200,"查询成功",bcbr);
+        }else{
+            return new CommonResult(400,"查询失败",null);
+        }
+    }
+
 
     @PostMapping("/saveBudgetCorpInfo")
     @ApiOperation(value = "保存集团下单位部门信息",httpMethod = "POST")

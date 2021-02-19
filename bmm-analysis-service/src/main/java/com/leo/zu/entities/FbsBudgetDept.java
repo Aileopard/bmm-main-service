@@ -45,7 +45,22 @@ public class FbsBudgetDept {
     private String corpCode;
 
     /**
-     * 预算部门展示Node：deptCode+deptName
+     * 科室列表
+     */
+    List<FbsBudgetDept> deptList;
+
+    /**
+     * 展示，所属单位：corpCode + corpName
+     */
+    private String displayCorp;
+
+    /**
+     * 展示，所属部门：parentCode + parentDeptCode
+     */
+    private String displayParentDept;
+
+    /**
+     * 当前预算部门展示Node：deptCode+deptName
      */
     String displayNode;
 
@@ -53,9 +68,4 @@ public class FbsBudgetDept {
      * 是否可选
      */
     Boolean disabledNode;
-
-    /**
-     * 科室列表
-     */
-    List<FbsBudgetDept> deptList;
 }

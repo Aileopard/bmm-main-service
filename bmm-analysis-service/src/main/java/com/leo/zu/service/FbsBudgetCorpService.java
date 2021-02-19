@@ -2,9 +2,11 @@ package com.leo.zu.service;
 
 import com.leo.zu.entities.BtCorp;
 import com.leo.zu.entities.FbsBudgetCorp;
+import com.leo.zu.request.BaseRequest;
 import com.leo.zu.request.BtCorpBudgetRequest;
 import com.leo.zu.request.FbsBudgetCorpRequest;
 import com.leo.zu.response.BtCorpBudgetResponse;
+import com.leo.zu.response.FbsNeedCompBudResponse;
 
 import java.util.List;
 
@@ -26,12 +28,19 @@ public interface FbsBudgetCorpService {
      * @param request
      * @return
      */
-    public BtCorpBudgetResponse getBudgetCorpTree(BtCorpBudgetRequest request);
+    public BtCorpBudgetResponse getBudgetCorpTree(BaseRequest request);
 
     /**
      * 取所有受控的预算单位/部门/科室信息（树）
      * @param request
      * @return
      */
-    public BtCorpBudgetResponse getBudgetCorpTreeOfControl(BtCorpBudgetRequest request);
+    public BtCorpBudgetResponse getBudgetCorpTreeOfControl(BaseRequest request);
+
+    /**
+     * 获取需要编制的预算单位
+     * @param request
+     * @return
+     */
+    public FbsNeedCompBudResponse getNeedCompBudgetCorp(BaseRequest request);
 }

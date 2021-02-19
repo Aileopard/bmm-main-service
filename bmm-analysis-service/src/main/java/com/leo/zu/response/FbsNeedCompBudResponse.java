@@ -1,38 +1,34 @@
 package com.leo.zu.response;
 
-import com.leo.zu.entities.BtCorp;
 import com.leo.zu.entities.FbsBudgetCorp;
+import com.leo.zu.entities.FbsBudgetDept;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.Map;
 
 /**
- * 单位-预算
  * @author leo-zu
- * @create 2021-01-31 8:56
+ * @create 2021-02-16 9:33
  */
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class BtCorpBudgetResponse {
-
+@NoArgsConstructor
+public class FbsNeedCompBudResponse {
     /**
      * 四位客户号
      */
-    String imCustNo;
+    private String imCustNo;
+    /**
+     * 需要编制预算单位
+     */
+    private List<FbsBudgetCorp> needCompCorpList;
 
     /**
-     * 集团下预算单位列表
+     * 需要编制的预算部门、科室
      */
-    List<FbsBudgetCorp> corpList;
-
-    /**
-     * 已受控预算单位、部门、科室
-     */
-    List<String> checkNode;
+    private List<FbsBudgetDept> needCompDeptList;
 
     /**
      * 编制方式
